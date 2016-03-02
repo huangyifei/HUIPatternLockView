@@ -72,6 +72,17 @@
  */
 @property (nonatomic, strong) UIImage *highlightedDotImage;
 
+/*!
+*  Dot image for the right state
+*/
+@property (nonatomic, strong) UIImage *rightDotImage;
+
+/*!
+*  Dot image for the wrong state
+*/
+@property (nonatomic, strong) UIImage *wrongDotImage;
+
+@property (nonatomic, assign) NSUInteger    state;
 
 #pragma mark Delegate
 
@@ -89,6 +100,8 @@
  *  @see -patternLockView:didDrawPatternWithDotCounts:password: method in <HUIPatternLockViewDelegate> protocol.
  */
 @property (nonatomic, copy) void(^didDrawPatternWithPassword)(HUIPatternLockView *lockView, NSUInteger dotCounts, NSString *password);
+
+- (void) setResult:(Boolean) success;
 
 @end
 

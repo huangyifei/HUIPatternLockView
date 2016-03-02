@@ -25,7 +25,10 @@
     self.lockView.dotWidth = 50;
     self.lockView.normalDotImage = [UIImage imageNamed:@"patternlock_dot_normal"];
     self.lockView.highlightedDotImage = [UIImage imageNamed:@"patternlock_dot_normal_highlighted"];
+    self.lockView.wrongDotImage = [UIImage imageNamed:@"patternlock_dot_normal"];
+    self.lockView.rightDotImage = [UIImage imageNamed:@"patternlock_dot_normal"];
     [self.lockView setDidDrawPatternWithPassword:^(HUIPatternLockView *lockView, NSUInteger dotCount, NSString *password) {
+        [self.lockView setResult:dotCount == 3];
         [weakSelf.topLabel setText:[NSString stringWithFormat:@"%lu dots, password is:%@", (unsigned long)dotCount, password]];
     }];
 }

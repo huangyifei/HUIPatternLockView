@@ -167,7 +167,14 @@ static const CGFloat    kDefaultLineWidth               = 8.0f;
     
     if (self.highlightedDotImage != nil) {
         for (HUIPatternLockViewDot *dot in self.highlightedDots) {
-            [self.highlightedDotImage drawInRect:dot.frame];
+            if (self.state == 0) {
+                [self.highlightedDotImage drawInRect:dot.frame];
+            } else if (self.state == -1){
+                [self.wrongDotImage drawInRect:dot.frame];
+            } else if (self.state == 1) {
+                [self.rightDotImage drawInRect:dot.frame];
+            }
+            
         }
     }
 }
@@ -350,13 +357,13 @@ static const CGFloat    kDefaultLineWidth               = 8.0f;
     
     /*  reset dots state after 0.5. Make the line display 0.5 seconds
      */
-    double delayInSeconds = 0.5;
-    __weak __typeof(&*self)weakSelf = self;
-    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-        [weakSelf _resetDotsStateWithBounds:weakSelf.bounds];
-        [weakSelf setNeedsDisplay];
-    });
+//    double delayInSeconds = 0.5;
+//    __weak __typeof(&*self)weakSelf = self;
+//    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+//    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+//        [weakSelf _resetDotsStateWithBounds:weakSelf.bounds];
+//        [weakSelf setNeedsDisplay];
+//    });
     
     
     /*  Notify the delegate
@@ -372,6 +379,27 @@ static const CGFloat    kDefaultLineWidth               = 8.0f;
     if ([self.delegate respondsToSelector:@selector(patternLockView:didDrawPatternWithDotCounts:password:)]) {
         [self.delegate patternLockView:self didDrawPatternWithDotCounts:dotCounts password:password];
     }
+}
+
+- (void) setResult:(Boolean) success {
+    /*  change line color
+     *  TODO change dot image
+     */
+    self.state = success? 1 : -1;
+    self.lineColor = success?[UIColor greenColor]:[UIColor redColor];
+    [self setNeedsDisplay];
+    
+    /*  reset dots state after 0.5. Make the line display 0.5 seconds
+     */
+    double delayInSeconds = 0.5;
+    __weak __typeof(&*self)weakSelf = self;
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+        [weakSelf _resetDotsStateWithBounds:weakSelf.bounds];
+        [weakSelf setNeedsDisplay];
+        weakSelf.lineColor = kDefaultLineColor;
+        weakSelf.state = 0;
+    });
 }
 
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
